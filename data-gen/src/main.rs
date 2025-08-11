@@ -43,7 +43,7 @@ struct Args {
 
     /// Maximum hypothetical group order that can be used later.
     /// Used for scaling gen only.
-    #[arg(short='M', long, default_value_t = 0)]
+    #[arg(short='M', long, default_value_t = 5)]
     braid_count_to_scale_to: i64,
 
     /// Amount of files to generate.
@@ -166,8 +166,6 @@ fn dynnikov_word(coord: &Vec<i64>, word: &Vec<i64>) -> Vec<i64> {
     let mut new_coord = coord.to_vec();
 
     for sigma in word.iter() {
-        println!("sigma: {}", sigma);
-        println!("before: {:?}", new_coord);
         if *sigma == 0 {
             // 0 is the identity, do nothing
             continue;
@@ -176,22 +174,31 @@ fn dynnikov_word(coord: &Vec<i64>, word: &Vec<i64>) -> Vec<i64> {
             new_coord = dynnikov_pve_sigma_action(&new_coord, *sigma);
         } else {
             // -ve version of generators
-            new_coord = dynnikov_nve_sigma_action(&new_coord, *sigma);
+            new_coord = dynnikov_nve_sigma_action(&new_coord, -*sigma);
         }
-        println!("after: {:?}\n", new_coord);
     }
 
     return new_coord;
 }
 
+fn get_initial(n: i64) -> Vec<i64> {
+    let mut a_part: Vec<i64> = (0..(n-1)).map(|_| 0).collect();
+    let b_part: Vec<i64> = (0..(n-1)).map(|_| -1).collect();
+
+    a_part.extend(b_part.iter().cloned());
+
+    return a_part;
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
 
-    let initial = vec![0, 0, -1, -1];
-    let word  = vec![1, 2, 1];
+    let initial = get_initial(args.braid_count_to_scale_to);
+    let word  = vec![1, 3, 4, 3, -4, -3, -4, 2, 1, -2, -1, -2];
 
     let new_coord = dynnikov_word(&initial, &word);
 
+    println!("initial: {:?}", initial);
     println!("Output: {:?}", new_coord);
 
     Ok(())
