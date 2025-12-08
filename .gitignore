@@ -1,1 +1,11 @@
+experiments/wandb
+experiments/model/*
+experiments/run_data/test/*.json
+experiments/run_data/train/*.json
+experiments/run_data/val/*.json
+experiments/datasets/skip-bot/*
+experiments/datasets/v2/*
+experiments/*.zip
+experiments/*.experiments/sh
 data-gen/target
+venv
