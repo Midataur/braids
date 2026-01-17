@@ -2,7 +2,6 @@ from utilities import *
 from torch.utils.data import DataLoader
 from dataset_types import DATASETS
 import numpy as np
-import torch
 import os
 
 # subset can be "train", "val", or "test"
@@ -12,19 +11,40 @@ def create_dataset(subset, config, verbose=False):
     # sometimes this can be "verbose AND some other condition"
     should_speak = verbose
 
-    # do train states
     if should_speak:
         print(f"Loading {subset} data...")
         
-    path = f"./datasets/{config["dataset"]}/{subset}"
+    path = f"./datasets/{config['dataset']}/{subset}"
     
-    # load data
+    # grab the list of files
     filenames = os.listdir(path)
-    dataset = DataSetType(config)
+
+    # sort files into inputs and targets
+    input_files = []
+    target_files = []
 
     for filename in filenames:
-        data = np.loadtxt(filename, delimiter=",", dtype=int)
-        dataset.append(data)
+        if "input" in filename:
+            input_files.append(filename)
+        else:
+            target_files.append(filename)
+
+    # pair up the inputs and targets
+    if len(input_files) != len(target_files):
+        raise Exception(
+            "Number of input files does not match number of target files"
+            +f" ({len(input_files)} != {len(target_files)})"
+        )
+    
+    file_pairs = zip(input_files, target_files)
+
+    dataset = DataSetType(config)
+
+    for input_filename, target_filename in file_pairs:
+        input_data = np.loadtxt(f"{path}/{input_filename}", delimiter=",", dtype=int)
+        target_data = np.loadtxt(f"{path}/{target_filename}", delimiter=",", dtype=int)
+
+        dataset.append(input_data, target_data)
         
     return dataset
 

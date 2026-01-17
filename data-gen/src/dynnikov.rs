@@ -97,6 +97,7 @@ fn nve_sigma_action(coord: &Vec<i64>, sigma: i64) -> Vec<i64> {
 
 /// Computes the action of a braid word on a dynnikov coordinate.
 /// Braids act left to right.
+/// 4 is the action s_4, -4 is the action s_4^{-1}
 pub fn word_action(coord: &Vec<i64>, word: &Vec<i64>) -> Vec<i64> {
     let mut new_coord = coord.to_vec();
 

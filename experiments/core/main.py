@@ -1,7 +1,22 @@
 CONFIG = {
-    "modelname": "ipray-11",
-    "model_type": "v2",
-    "dataset": "dynnikov",
+    "modelname": "test-1",
+    "model_type": "RegressionModel",
+    "dataset": "initialtests",
+    "dataset_type": "basicregression",
+
+    # dataset parameters
+    "braid_count": 3,
+    "max_word_length": 6,
+
+    # number of tokens in the vocabulary
+    # it's braid_count * 2 + 1
+    # TODO: make this derived
+    "vocab_size": 7,
+
+    # length of the input
+    # it's the same as max word length
+    # TODO: make this derived
+    "context_length": 6,
 
     # embedding dimension
     # good starting value: 402
@@ -47,10 +62,6 @@ CONFIG = {
     # usually 0
     "n_workers": 0, 
 
-    # maximum number of categorical variables
-    # decided empirically, never really need more than 200
-    "max_cat_length": 200, 
-
     # when loading data, what do we do if there are too many categorical variables?
     # if true, display a warning and skip that one
     # if false, throw an error
@@ -59,12 +70,6 @@ CONFIG = {
 
     # should be . unless you're doing something weird
     "PATH": ".",
-
-    # should we load in preprocessed data?
-    # if true, does that
-    # if false, processes the data fresh
-    # true assumes you have actually run preprocess.py
-    "use_preprocessed_data": True
 }
 
 assert CONFIG["n_embed"] % CONFIG["n_heads"] == 0

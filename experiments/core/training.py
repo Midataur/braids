@@ -6,9 +6,7 @@ import wandb
 from utilities import *
 from dataloading import *
 from tqdm.auto import tqdm
-from model_code import *
-from accelerate import Accelerator, load_checkpoint_and_dispatch
-import os
+from accelerate import Accelerator
 
 def train(config):
     accelerator = Accelerator()
@@ -24,22 +22,11 @@ def train(config):
         # load the data
         print("Loading data...")
 
+    # try loading model and config
+    model, config = try_loading_model(config)
+
     train_dataloader = get_dataset_and_loader("train", config, verbose=accelerator.is_local_main_process)[1]
     val_dataloader = get_dataset_and_loader("val", config, verbose=accelerator.is_local_main_process)[1]
-
-    # setup the model
-    ModelType = MODELS[config["model_type"]]
-
-    model = ModelType(config)
-
-    # optionally: load the model
-    path = config["PATH"]
-    modelname = config["modelname"]
-    save_directory = f"{path}/model_saves/{modelname}"
-    file_path = f"{save_directory}/model.safetensors"
-    
-    if os.path.isfile(file_path):
-        model = load_checkpoint_and_dispatch(model, file_path)
 
     # Define the loss function
     criterion = model.get_loss()
@@ -85,12 +72,8 @@ def train(config):
             config=config,
             settings=wandb.Settings(),
             resume="allow",
-            id=modelname
+            id=config["modelname"]
         )
-
-    # patience = 45
-    # cur_patience = 0
-    # best_loss = float("inf")
 
     epoch = 0
 
@@ -109,13 +92,9 @@ def train(config):
         if accelerator.is_local_main_process:
             print("Training...")
         
-        for batch in tqdm(train_dataloader, disable=not accelerator.is_local_main_process):
-            # get input and targets
-            model_input, targets = batch[:-1], batch[-1]
-            targets = targets.reshape(-1) # fix tensor shape (specific to this project)
-
+        for inputs, targets in tqdm(train_dataloader, disable=not accelerator.is_local_main_process):
             optimizer.zero_grad()  # Zero the gradients
-            outputs = model(*model_input)  # Forward pass
+            outputs = model(inputs)  # Forward pass
 
             loss = criterion(outputs, targets.float())  # Calculate the loss
             accelerator.backward(loss)  # Backward pass
@@ -143,13 +122,8 @@ def train(config):
             if accelerator.is_local_main_process:
                 print("Evaluating...")
 
-            for batch in tqdm(val_dataloader, disable=not accelerator.is_local_main_process):
-                # get input and targets
-                model_input, targets = batch[:-1], batch[-1]
-
-                targets = targets.reshape(-1) # fix tensor shape (specific to this project)
-
-                outputs = model(*model_input)
+            for inputs, targets in tqdm(val_dataloader, disable=not accelerator.is_local_main_process):
+                outputs = model(inputs)
 
                 all_outputs, all_targets = accelerator.gather_for_metrics((outputs, targets))
 
@@ -188,7 +162,7 @@ def train(config):
             
         # always save the model
         accelerator.wait_for_everyone()
-        accelerator.save_model(model, f"{save_directory}")
+        save_model_and_config(model, config, accelerator)
         
         # save embedding pictures so we can make gifs later
         # this is broken since we added accelerate

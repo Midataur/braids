@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
-from game_data import VOCABULARY, AUGMENTED_CARDS_LIST
-from dataloading import SimpleDataset
 
 class Head(nn.Module):
     def __init__(self, config):
@@ -97,25 +95,26 @@ class Block(nn.Module):
         x = x + self.sa(self.ln1(x))
         x = x + self.ffwd(self.ln2(x))
         return x
-
-# behold, my weird bespoke not-quite-a transformer
-class SkipBot(nn.Module):
-    def __init__(self, config, *args):
+    
+class BasicTransformer(nn.Module):
+    """A bog standard transfomer."""
+    def __init__(self, config):
         super().__init__()
+
         n_embed = config["n_embed"]
+        vocab_size = config["vocab_size"]
+        context_length = config["context_length"]
+        n_head = config["n_heads"]
         n_blocks = config["n_blocks"]
-        self.n_cont = 6
 
-        vocab_size = len(VOCABULARY)
-        card_count = len(AUGMENTED_CARDS_LIST)
-
-        self.state_token_embedding_table = nn.Embedding(vocab_size, n_embed)
-        self.cont_embedding_transformation = nn.Linear(self.n_cont, n_embed, bias=True)
-        self.choice_token_embedding_table = nn.Embedding(card_count, n_embed)
+        # create embeddings
+        self.token_embedding_table = nn.Embedding(vocab_size, n_embed)
+        self.position_embedding = nn.Embedding(context_length, n_embed)
 
         # this is just a place to attach a hook
         self.embed_hook = nn.Identity()
         
+        # create blocks
         self.blocks = [Block(config) for _ in range(n_blocks)]
         self.blocks.append(nn.LayerNorm(n_embed))
 
@@ -123,116 +122,76 @@ class SkipBot(nn.Module):
 
         # the output layer
         # projects the final vector down to the output dimension
-        self.lm_head = nn.Linear(n_embed, vocab_size, bias=True)
+        self.lm_head = nn.Linear(n_embed, vocab_size, bias=False)
        
         # we shouldn't use this during training, only generation
         # this is because cross entropy loss already applies a softmax
         # and we don't want to apply that twice
         self.softmax = nn.Softmax(dim=1)
 
-    def forward(self, cat, cont, choice, *args):
-        # get embeddings
-        tok_emb = self.state_token_embedding_table(cat) # (B, C, E)
-        cont_emb = self.cont_embedding_transformation(cont) # (B, E)
-        card_emb = self.choice_token_embedding_table(choice) # (B, C, E)
+    def forward(self, idx):
+        B, T = idx.shape
 
-        #reshape cont_emb
-        batchsize = tok_emb.shape[0]
-        cont_emb = cont_emb.reshape((batchsize, 1, -1)) # (B, C, E)
+        # idx and targets are both (B, T) tensor of integers
+        tok_emb = self.token_embedding_table(idx) #(B, T, C)
+        pos_emb = self.position_embedding(torch.arange(T, device=idx.device)) #(T, C)
 
-        x = torch.concat((tok_emb, cont_emb, card_emb), dim=1)
-        
+        x = tok_emb + pos_emb #(B, T, C)
         x = self.embed_hook(x)
         
-        x = self.blocks(x) # apply a bunch of blocks (sa + feedforward) (B, C, E)
+        x = self.blocks(x) # apply a bunch of blocks (sa + feedforward) (B, T, C)
 
-        # add all the vectors together
-        # seems interesting
-        x = torch.sum(x, axis=1) # (B, E)
-
-        logits = self.lm_head(x) #(B, output_dim)
+        logits = self.output_step(x)
 
         return logits
+
+    # this is abstracted into a different method to allow
+    # for different models to have different output steps
+    def output_step(self, x):
+        logits = self.lm_head(x) #(B, T, vocab_size)
+
+        # focus only on the last time step
+        logits = logits[:, -self.config["output_length"]:, :] # (B, vocab_size)
+        return logits
     
-    def gen_from_states(self, states, choices, config, return_logits=False):
-        # process the states
-        dataset = SimpleDataset(states, choices, config, verbose=False)
+    def generate(self, *args):
+        """
+            Generates a permutation for a sequence.
+            If force_valid is set to True then the sequence is
+            guaranteed to be a valid permutation, if not a correct one.
+        """
 
-        # get the prediction
-        cat_tensor = dataset.state_cat
-        cont_tensor = dataset.state_cont
-        choice_tensor = dataset.card_choices
+        raise NotImplementedError("I haven't made this yet.")
 
-        logits = self(cat_tensor, cont_tensor, choice_tensor) # (B, output_dim)
-
-        if return_logits:
-            return logits
-
-        return self.softmax(logits)
-    
     def get_loss(self):
         return nn.CrossEntropyLoss()
 
-# behold, my weird bespoke not-quite-a transformer (2nd edition)
-class V2(nn.Module):
-    def __init__(self, config, *args):
-        super().__init__()
+
+class RegressionModel(BasicTransformer):
+    """
+        The same as the BasicTransformer expect
+        the output is the actual dynnikov vector.
+
+        That is, the entire vector is done in one step
+        and the model is doing regression instead
+        of classification.
+    """
+
+    def __init__(self, config):
+        super().__init__(config)
+
         n_embed = config["n_embed"]
-        n_blocks = config["n_blocks"]
-        self.n_cont = 12
+        vector_length = config["braid_count"] + 1
 
-        vocab_size = len(VOCABULARY)
-
-        self.state_token_embedding_table = nn.Embedding(vocab_size, n_embed)
-        self.cont_embedding_transformation = nn.Linear(self.n_cont, n_embed, bias=True)
-
-        # this is just a place to attach a hook
-        self.embed_hook = nn.Identity()
-        
-        self.blocks = [Block(config) for _ in range(n_blocks)]
-        self.blocks.append(nn.LayerNorm(n_embed))
-
-        self.blocks = nn.Sequential(*self.blocks)
-
-        # the output layer
-        # projects the final vector down to the output dimension
-        self.lm_head = nn.Linear(n_embed, 1, bias=True)
-       
-        # we shouldn't use this during training, only generation
-        # this is because cross entropy loss already applies a softmax
-        # and we don't want to apply that twice
-        self.sigmoid = nn.Sigmoid()
-
-    def forward(self, cat, cont, *args):
-        # get embeddings
-        tok_emb = self.state_token_embedding_table(cat) # (B, C, E)
-        cont_emb = self.cont_embedding_transformation(cont) # (B, E)
-
-        #reshape cont_emb
-        batchsize = tok_emb.shape[0]
-        cont_emb = cont_emb.reshape((batchsize, 1, -1)) # (B, C, E)
-
-        x = torch.concat((tok_emb, cont_emb), dim=1)
-        
-        x = self.embed_hook(x)
-        
-        x = self.blocks(x) # apply a bunch of blocks (sa + feedforward) (B, C, E)
-
-        # add all the vectors together
-        # seems interesting
-        x = torch.sum(x, axis=1) # (B, E)
-
-        logit = self.lm_head(x).reshape((-1)) # B
-
-        return logit
-    
-    def gen_from_states(self, states, choices, config, return_logits=False):
-        raise Exception("Not implemented")
+        # change the output to be a whole vector
+        # note we now have bias=True
+        self.lm_head = nn.Linear(n_embed, vector_length, bias=True)
     
     def get_loss(self):
-        return nn.BCEWithLogitsLoss()
+        return nn.MSELoss()
+
 
 MODELS = {
-    "skip-bot": SkipBot,
-    "v2": V2
+    "BasicTransformer": BasicTransformer,
+    "RegressionModel": RegressionModel
 }
