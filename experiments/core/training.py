@@ -96,6 +96,9 @@ def train(config):
             optimizer.zero_grad()  # Zero the gradients
             outputs = model(inputs)  # Forward pass
 
+            # make sure outputs and targets are the same shape
+            outputs = outputs.reshape(targets.shape)
+
             loss = criterion(outputs, targets.float())  # Calculate the loss
             accelerator.backward(loss)  # Backward pass
             optimizer.step()  # Update weights
@@ -124,6 +127,9 @@ def train(config):
 
             for inputs, targets in tqdm(val_dataloader, disable=not accelerator.is_local_main_process):
                 outputs = model(inputs)
+
+                # make sure outputs and targets are the same shape
+                outputs = outputs.reshape(targets.shape)
 
                 all_outputs, all_targets = accelerator.gather_for_metrics((outputs, targets))
 

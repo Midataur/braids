@@ -1,5 +1,5 @@
 CONFIG = {
-    "modelname": "test-1",
+    "modelname": "test-2",
     "model_type": "RegressionModel",
     "dataset": "initialtests",
     "dataset_type": "basicregression",

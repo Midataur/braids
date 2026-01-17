@@ -7,16 +7,10 @@ import os
 CONFIG_FILE_NAME = "config.pickle"
 MODEL_FILE_NAME = "model.safetensors"
 
+# TODO: support multiple accuracy types
+# probably attach it to the model
 def calculate_accuracy(output, target):
-    # targets is a (B) tensor of integers that have the index of the correct class
-    # we need to see if the max logit is at the right index
-
-    # cross entropy case
-    if len(output.shape) > 1:
-        return (argmax(output, dim=1) == target).float().mean()
-    
-    # bce case
-    return (output.round() == target).float().mean()
+    return (output.round() == target.round()).float().mean()
 
 def save_model_and_config(model, config, accelerator):
     """
@@ -31,7 +25,7 @@ def save_model_and_config(model, config, accelerator):
     accelerator.save_model(model, f"{save_directory}")
 
     # save the config
-    with open(f"{save_directory}/{CONFIG_FILE_NAME}") as file:
+    with open(f"{save_directory}/{CONFIG_FILE_NAME}", "wb") as file:
         pickle.dump(config, file)
 
 
@@ -53,8 +47,8 @@ def try_loading_model(config):
 
     if os.path.isfile(config_file_path):
         # redefine the config
-        with open(f"{save_directory}/{CONFIG_FILE_NAME}") as file:
-            config = pickle.load()
+        with open(f"{save_directory}/{CONFIG_FILE_NAME}", "rb") as file:
+            config = pickle.load(file)
             print("Loaded config from file, config may be different.")
 
     # create the model template

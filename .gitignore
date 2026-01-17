@@ -4,6 +4,7 @@ experiments/run_data/test/*.json
 experiments/run_data/train/*.json
 experiments/run_data/val/*.json
 experiments/datasets/
+experiments/model_saves/
 experiments/*.zip
 experiments/*.experiments/sh
 data-gen/target

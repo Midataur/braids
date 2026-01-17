@@ -12,7 +12,7 @@ class SimpleDataset(Dataset):
         self.targets = torch.empty((0, max_coord_length), dtype=int)
 
     def __len__(self):
-        return len(self.state_cat)
+        return len(self.inputs)
 
     def __getitem__(self, index):
         sample = (
@@ -39,7 +39,7 @@ class SimpleDataset(Dataset):
     # assumes the data has already been processed
     def raw_append(self, inputs, targets):
         new_inputs = torch.tensor(inputs, dtype=int)
-        new_targets = torch.tensor(targets, dtype=int).reshape((-1,1))
+        new_targets = torch.tensor(targets, dtype=int)
 
         # probably overkill but ah well
         new_inputs._fix_weakref()

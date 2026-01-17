@@ -101,10 +101,11 @@ class BasicTransformer(nn.Module):
     def __init__(self, config):
         super().__init__()
 
+        self.config = config
+
         n_embed = config["n_embed"]
         vocab_size = config["vocab_size"]
         context_length = config["context_length"]
-        n_head = config["n_heads"]
         n_blocks = config["n_blocks"]
 
         # create embeddings
@@ -151,7 +152,7 @@ class BasicTransformer(nn.Module):
         logits = self.lm_head(x) #(B, T, vocab_size)
 
         # focus only on the last time step
-        logits = logits[:, -self.config["output_length"]:, :] # (B, vocab_size)
+        logits = logits[:, -1:, :] # (B, vocab_size)
         return logits
     
     def generate(self, *args):
