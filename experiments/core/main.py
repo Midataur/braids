@@ -1,22 +1,13 @@
 CONFIG = {
-    "modelname": "test-2",
+    "modelname": "test-3",
     "model_type": "RegressionModel",
     "dataset": "initialtests",
     "dataset_type": "basicregression",
+    "random_seed": 42,
 
     # dataset parameters
     "braid_count": 3,
     "max_word_length": 6,
-
-    # number of tokens in the vocabulary
-    # it's braid_count * 2 + 1
-    # TODO: make this derived
-    "vocab_size": 7,
-
-    # length of the input
-    # it's the same as max word length
-    # TODO: make this derived
-    "context_length": 6,
 
     # embedding dimension
     # good starting value: 402

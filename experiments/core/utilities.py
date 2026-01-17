@@ -7,11 +7,6 @@ import os
 CONFIG_FILE_NAME = "config.pickle"
 MODEL_FILE_NAME = "model.safetensors"
 
-# TODO: support multiple accuracy types
-# probably attach it to the model
-def calculate_accuracy(output, target):
-    return (output.round() == target.round()).float().mean()
-
 def save_model_and_config(model, config, accelerator):
     """
         Saves a model and the related config.

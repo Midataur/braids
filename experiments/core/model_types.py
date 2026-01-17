@@ -103,9 +103,12 @@ class BasicTransformer(nn.Module):
 
         self.config = config
 
+        # derive some quantities
+        vocab_size = config["braid_count"]*2 + 1
+        context_length = config["max_word_length"] # this isn't akways as simple
+
+        # extract some config variables
         n_embed = config["n_embed"]
-        vocab_size = config["vocab_size"]
-        context_length = config["context_length"]
         n_blocks = config["n_blocks"]
 
         # create embeddings
@@ -166,6 +169,13 @@ class BasicTransformer(nn.Module):
 
     def get_loss(self):
         return nn.CrossEntropyLoss()
+    
+    # TODO: support multiple accuracy types
+    # probably attach it to the model
+    def calculate_accuracy(self, output, target):
+        # targets is a (B) tensor of integers that have the index of the correct class
+        # we need to see if the max logit is at the right index
+        return (torch.argmax(output, dim=1) == target).float().mean()
 
 
 class RegressionModel(BasicTransformer):
@@ -190,6 +200,10 @@ class RegressionModel(BasicTransformer):
     
     def get_loss(self):
         return nn.MSELoss()
+    
+    def calculate_accuracy(self, output, target):
+        # we're checking if the outputs (when rounded) is the right vector
+        return (output.round() == target.round()).float().mean()
 
 
 MODELS = {

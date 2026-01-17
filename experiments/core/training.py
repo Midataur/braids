@@ -22,6 +22,8 @@ def train(config):
         # load the data
         print("Loading data...")
 
+    torch.manual_seed(config["random_seed"])
+
     # try loading model and config
     model, config = try_loading_model(config)
 
@@ -105,7 +107,7 @@ def train(config):
 
             # stat track
             total_train_loss += loss.item()
-            accuracy = calculate_accuracy(outputs, targets)
+            accuracy = model.calculate_accuracy(outputs, targets)
             total_train_accuracy += accuracy
             num_batches += 1
 
@@ -134,7 +136,7 @@ def train(config):
                 all_outputs, all_targets = accelerator.gather_for_metrics((outputs, targets))
 
                 # calculate the val accuracy
-                accuracy = calculate_accuracy(outputs, targets)
+                accuracy = model.calculate_accuracy(outputs, targets)
                 total_accuracy += accuracy
 
                 # Calculate the val loss
