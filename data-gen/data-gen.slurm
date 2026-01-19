@@ -37,7 +37,7 @@ module load GCC/11.3.0
 module load Rust/1.65.0
 
 # The job command(s):
-cargo run -- $@
+cargo run --release -- $@
 
 ##DO NOT ADD/EDIT BEYOND THIS LINE##
 ##Job monitor command to list the resource usage
