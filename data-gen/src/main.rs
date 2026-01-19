@@ -1,15 +1,15 @@
 use std::error::Error;
 use kdam::tqdm;
 use clap::Parser;
-
-mod utilities;
-mod dynnikov;
-mod args;
-
+use std::fs;
 use std::env::args;
 use std::thread;
 use std::sync::mpsc;
 use csv::WriterBuilder;
+
+mod utilities;
+mod dynnikov;
+mod args;
 
 use crate::utilities::get_random_word;
 
@@ -55,7 +55,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             });
         }
 
-        // Main thread receives results from worker threads
+        // main thread receives results from worker threads
         for _ in tqdm!(
             0..args.dataset_size,
             leave=false,
@@ -73,7 +73,14 @@ fn main() -> Result<(), Box<dyn Error>> {
             filename += &((args.start_index + file_index).to_string())
         }
 
-        // Write the data to the file
+        // extracts the directory from the filename
+        let directory_parts: Vec<&str> = filename.split('/').collect();
+        let directory = directory_parts.split_last().unwrap().1.join("/");
+
+        // create the directory if needed
+        let _ = fs::create_dir_all(directory);
+
+        // write the data to the file
         if args.number_of_files_to_gen == -1 {
             println!("Writing data to file...");
         }
@@ -87,7 +94,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             let _ = writer.write_record(string_row);
         }
 
-        // Flush the writer to ensure all data is written to the file
+        // flush the writer to ensure all data is written to the file
         writer.flush()?;
 
         // write the coordinate data
