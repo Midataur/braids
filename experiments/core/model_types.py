@@ -192,7 +192,9 @@ class RegressionModel(BasicTransformer):
         super().__init__(config)
 
         n_embed = config["n_embed"]
-        vector_length = config["braid_count"] + 1
+        
+        # this comes from Thiffeault p93
+        vector_length = 2*config["braid_count"] - 2
 
         # change the output to be a whole vector
         # note we now have bias=True
