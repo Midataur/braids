@@ -1,7 +1,7 @@
 CONFIG = {
-    "modelname": "smallandsmooth-1",
+    "modelname": "smallandshort-1",
     "model_type": "RegressionModel",
-    "dataset": "smallandsmooth",
+    "dataset": "smallandshort",
     "dataset_type": "basicregression",
     "random_seed": 42,
 
@@ -53,8 +53,8 @@ CONFIG = {
     # usually 0
     "n_workers": 0, 
 
-    # should be . unless you're doing something weird
-    "PATH": ".",
+    # should be . or .. unless you're doing something weird
+    "PATH": "..",
 }
 
 assert CONFIG["n_embed"] % CONFIG["n_heads"] == 0
