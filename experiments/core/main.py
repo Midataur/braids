@@ -1,13 +1,13 @@
 CONFIG = {
-    "modelname": "test-3",
+    "modelname": "smallandsmooth-1",
     "model_type": "RegressionModel",
-    "dataset": "initialtests",
+    "dataset": "smallandsmooth",
     "dataset_type": "basicregression",
     "random_seed": 42,
 
     # dataset parameters
-    "braid_count": 3,
-    "max_word_length": 6,
+    "braid_count": 4,
+    "max_word_length": 10,
 
     # embedding dimension
     # good starting value: 402
@@ -24,7 +24,7 @@ CONFIG = {
 
     # number of blocks to have
     # higher means a deeper network
-    "n_blocks": 8,
+    "n_blocks": 4,
 
     # number of continuous variables
     # currently 12, may change
@@ -37,7 +37,7 @@ CONFIG = {
     "batchsize": 512, 
 
     # good starting value: 0.1
-    "weight_decay": 0.0001, 
+    "weight_decay": 0.1, 
 
     # usually 0.1
     "lr_factor": 0.1, 
@@ -52,12 +52,6 @@ CONFIG = {
     # set to 0 for all, +ve for specific
     # usually 0
     "n_workers": 0, 
-
-    # when loading data, what do we do if there are too many categorical variables?
-    # if true, display a warning and skip that one
-    # if false, throw an error
-    # usually want true, since outliers aren't worth an error
-    "discard_too_long": True, # set to true unless you want to fight your data
 
     # should be . unless you're doing something weird
     "PATH": ".",
