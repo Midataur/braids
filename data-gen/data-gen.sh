@@ -1,8 +1,9 @@
 #!/bin/bash
-# Created by the University of Melbourne job script generator for SLURM
-# Mon Jan 08 2024 21:45:49 GMT+1100 (Australian Eastern Daylight Time)
 
 sbatch <<EOT
+#!/bin/bash
+# Created by the University of Melbourne job script generator for SLURM
+# Mon Jan 08 2024 21:45:49 GMT+1100 (Australian Eastern Daylight Time)
 
 # Partition for the job:
 #SBATCH --partition=sapphire
