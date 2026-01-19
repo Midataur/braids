@@ -1,7 +1,4 @@
 #!/bin/bash
-
-sbatch <<EOT
-#!/bin/bash
 # Created by the University of Melbourne job script generator for SLURM
 # Mon Jan 08 2024 21:45:49 GMT+1100 (Australian Eastern Daylight Time)
 
@@ -40,10 +37,8 @@ module load GCC/11.3.0
 module load Rust/1.65.0
 
 # The job command(s):
-cargo run -- $1
+cargo run -- $@
 
 ##DO NOT ADD/EDIT BEYOND THIS LINE##
 ##Job monitor command to list the resource usage
 my-job-stats -a -n -s
-
-EOT
