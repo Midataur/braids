@@ -6,7 +6,9 @@ class SimpleDataset(Dataset):
         self.config = config
 
         max_word_length = config["max_word_length"]
-        max_coord_length = config["braid_count"] + 1
+        
+        # this comes from Thiffeault p93
+        max_coord_length = 2*config["braid_count"] - 2
 
         self.inputs = torch.empty((0, max_word_length), dtype=int)
         self.targets = torch.empty((0, max_coord_length), dtype=int)
