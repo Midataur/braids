@@ -50,7 +50,7 @@ fi
 module load CUDA/12.4.1
 
 # The job command(s):
-source ./venv/bin/activate
+source ../venv/bin/activate
 CUDA_LAUNCH_BLOCKING=1 accelerate launch ./core/main.py
 
 ##DO NOT ADD/EDIT BEYOND THIS LINE##
