@@ -1,5 +1,5 @@
 CONFIG = {
-    "modelname": "smallandshort-4",
+    "modelname": "smallandshort-5",
     "model_type": "RegressionModel",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
@@ -11,7 +11,7 @@ CONFIG = {
 
     # embedding dimension
     # good starting value: 402
-    "n_embed": 360,
+    "n_embed": 402,
 
     # number of attention heads:
     # good starting value: 6
@@ -25,10 +25,6 @@ CONFIG = {
     # number of blocks to have
     # higher means a deeper network
     "n_blocks": 4,
-
-    # number of continuous variables
-    # currently 12, may change
-    "n_cont": 12,
 
     # good starting value: 3*10^-4
     "learning_rate": 3*(10**-4), 
