@@ -27,7 +27,7 @@ def train(config):
     # try loading model and config
     model, config = try_loading_model(config)
 
-    train_dataloader = get_dataset_and_loader("train", config, verbose=accelerator.is_local_main_process)[1]
+    train_dataloader, train_dataset = get_dataset_and_loader("train", config, verbose=accelerator.is_local_main_process)
     val_dataloader = get_dataset_and_loader("val", config, verbose=accelerator.is_local_main_process)[1]
 
     # Define the loss function
@@ -58,6 +58,9 @@ def train(config):
     model, optimizer, train_dataloader, scheduler = accelerator.prepare(
         model, optimizer, train_dataloader, scheduler
     )
+
+    # add dataset size to config
+    config["dataset_size"] = len(train_dataset)
 
     val_dataloader = accelerator.prepare(val_dataloader)
 
