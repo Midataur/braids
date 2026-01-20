@@ -29,11 +29,11 @@ def create_dataset(subset, config, verbose=False):
         else:
             target_files.append(filename)
 
-    print(input_files)
-    print(target_files)
-
     input_files = sorted(input_files)
     target_files = sorted(target_files)
+
+    print(input_files)
+    print(target_files)
 
     # pair up the inputs and targets
     if len(input_files) != len(target_files):
