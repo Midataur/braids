@@ -32,9 +32,6 @@ def create_dataset(subset, config, verbose=False):
     input_files = sorted(input_files)
     target_files = sorted(target_files)
 
-    print(input_files)
-    print(target_files)
-
     # pair up the inputs and targets
     if len(input_files) != len(target_files):
         raise Exception(
