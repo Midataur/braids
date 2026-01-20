@@ -1,5 +1,5 @@
 CONFIG = {
-    "modelname": "smallandshort-8",
+    "modelname": "smallandshort-9",
     "model_type": "RegressionModel",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
@@ -33,7 +33,7 @@ CONFIG = {
     "batchsize": 512, 
 
     # good starting value: 0.1
-    "weight_decay": 0.001, 
+    "weight_decay": 0.01, 
 
     # usually 0.1
     "lr_factor": 0.1, 
