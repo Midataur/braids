@@ -14,6 +14,7 @@ def create_dataset(subset, config, verbose=False):
     if should_speak:
         print(f"Loading {subset} data...")
         
+    # TODO: make this use config["path"] instead of .
     path = f"./datasets/{config['dataset']}/{subset}"
     
     # grab the list of files
