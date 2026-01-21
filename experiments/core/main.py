@@ -1,5 +1,5 @@
 CONFIG = {
-    "modelname": "smallandshort-16",
+    "modelname": "smallandshort-17",
     "model_type": "RegressionModel",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
