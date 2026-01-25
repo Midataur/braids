@@ -104,7 +104,7 @@ class BasicTransformer(nn.Module):
         self.config = config
 
         # derive some quantities
-        vocab_size = config["braid_count"]*2 + 1
+        vocab_size = config["braid_count"]*2 - 1
         context_length = config["max_word_length"] # this isn't akways as simple
 
         # extract some config variables
