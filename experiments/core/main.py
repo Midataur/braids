@@ -1,5 +1,5 @@
 CONFIG = {
-    "modelname": "smallandshort-23",
+    "modelname": "smallandshort-24",
     "model_type": "RegressionModel",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
@@ -30,10 +30,10 @@ CONFIG = {
     "learning_rate": 3*(10**-4), 
 
     # good starting value: 64
-    "batchsize": 512, 
+    "batchsize": 1024, 
 
     # good starting value: 0.1
-    "weight_decay": 0.0001, 
+    "weight_decay": 0.001, 
 
     # usually 0.1
     "lr_factor": 0.1, 
