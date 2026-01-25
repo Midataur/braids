@@ -105,7 +105,7 @@ class BasicTransformer(nn.Module):
 
         # derive some quantities
         vocab_size = config["braid_count"]*2 - 1
-        context_length = config["max_word_length"] # this isn't akways as simple
+        context_length = config["max_word_length"] # this isn't always as simple
 
         # extract some config variables
         n_embed = config["n_embed"]
