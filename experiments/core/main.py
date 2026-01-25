@@ -1,5 +1,5 @@
 CONFIG = {
-    "modelname": "smallandshort-21",
+    "modelname": "smallandshort-22",
     "model_type": "RegressionModel",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
@@ -24,7 +24,7 @@ CONFIG = {
 
     # number of blocks to have
     # higher means a deeper network
-    "n_blocks": 8,
+    "n_blocks": 6,
 
     # good starting value: 3*10^-4
     "learning_rate": 3*(10**-4), 
@@ -33,7 +33,7 @@ CONFIG = {
     "batchsize": 512, 
 
     # good starting value: 0.1
-    "weight_decay": 0.001, 
+    "weight_decay": 0.01, 
 
     # usually 0.1
     "lr_factor": 0.1, 
