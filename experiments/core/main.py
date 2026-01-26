@@ -1,5 +1,5 @@
 CONFIG = {
-    "modelname": "smallandshort-24",
+    "modelname": "smallandshort-25",
     "model_type": "RegressionModel",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
@@ -11,7 +11,7 @@ CONFIG = {
 
     # embedding dimension
     # good starting value: 402
-    "n_embed": 402,
+    "n_embed": 450,
 
     # number of attention heads:
     # good starting value: 6
