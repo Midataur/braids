@@ -1,6 +1,7 @@
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.nn.parallel import DistributedDataParallel
 import torch
 import wandb
 from utilities import *
@@ -110,7 +111,13 @@ def train(config):
 
             # stat track
             total_train_loss += loss.item()
-            accuracy = model.calculate_accuracy(outputs, targets)
+
+            # deal with the case where we're training on multiple gpus
+            if type(model) == DistributedDataParallel:
+                accuracy = model.module.calculate_accuracy(outputs, targets)
+            else:
+                accuracy = model.calculate_accuracy(outputs, targets)
+
             total_train_accuracy += accuracy
             num_batches += 1
 
@@ -139,7 +146,12 @@ def train(config):
                 all_outputs, all_targets = accelerator.gather_for_metrics((outputs, targets))
 
                 # calculate the val accuracy
-                accuracy = model.calculate_accuracy(outputs, targets)
+                # deal with the case where we're training on multiple gpus
+                if type(model) == DistributedDataParallel:
+                    accuracy = model.module.calculate_accuracy(outputs, targets)
+                else:
+                    accuracy = model.calculate_accuracy(outputs, targets)
+                
                 total_accuracy += accuracy
 
                 # Calculate the val loss
