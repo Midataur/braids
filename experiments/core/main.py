@@ -1,5 +1,5 @@
 CONFIG = {
-    "modelname": "smallandshort-26",
+    "modelname": "smallandshort-27",
     "model_type": "RegressionModel",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
@@ -16,7 +16,7 @@ CONFIG = {
     # number of attention heads:
     # good starting value: 6
     # n_embed % n_heads must be 0
-    "n_heads": 6,
+    "n_heads": 8,
 
     # dropout factor to use
     # i usually set to zero
