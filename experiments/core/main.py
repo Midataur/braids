@@ -16,7 +16,7 @@ CONFIG = {
     # number of attention heads:
     # good starting value: 6
     # n_embed % n_heads must be 0
-    "n_heads": 8,
+    "n_heads": 6,
 
     # dropout factor to use
     # i usually set to zero
@@ -24,7 +24,7 @@ CONFIG = {
 
     # number of blocks to have
     # higher means a deeper network
-    "n_blocks": 6,
+    "n_blocks": 8,
 
     # good starting value: 3*10^-4
     "learning_rate": 3*(10**-4), 
