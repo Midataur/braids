@@ -1,5 +1,5 @@
 CONFIG = {
-    "modelname": "smallandshort-27",
+    "modelname": "smallandshort-28",
     "model_type": "RegressionModel",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
@@ -8,6 +8,10 @@ CONFIG = {
     # dataset parameters
     "braid_count": 4,
     "max_word_length": 10,
+
+    # the size to cap the dataset at
+    # if the dataset is already smaller than this, this does nothing
+    "dataset_cap": 2_000_000,
 
     # embedding dimension
     # good starting value: 402
@@ -24,7 +28,7 @@ CONFIG = {
 
     # number of blocks to have
     # higher means a deeper network
-    "n_blocks": 8,
+    "n_blocks": 16,
 
     # good starting value: 3*10^-4
     "learning_rate": 3*(10**-4), 

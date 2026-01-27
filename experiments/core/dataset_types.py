@@ -53,8 +53,11 @@ class SimpleDataset(Dataset):
         # probably overkill but ah well
         self.inputs._fix_weakref()
         self.targets._fix_weakref()
-        
 
+        # reduce size down to maximum
+        if "dataset_cap" in self.config.keys():
+            self.inputs = self.inputs[:self.config["dataset_cap"]]
+            self.targets = self.targets[:self.config["dataset_cap"]]
 
 class BasicRegression(SimpleDataset):
     def __init__(self, config):
