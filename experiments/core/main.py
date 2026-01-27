@@ -1,5 +1,5 @@
 CONFIG = {
-    "modelname": "smallandshort-30",
+    "modelname": "smallandshort-31",
     "model_type": "RegressionModel",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
@@ -11,7 +11,7 @@ CONFIG = {
 
     # the size to cap the dataset at
     # if the dataset is already smaller than this, this does nothing
-    "dataset_cap": 2_000_000,
+    "dataset_cap": 4_000_000,
 
     # embedding dimension
     # good starting value: 402
