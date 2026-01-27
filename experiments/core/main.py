@@ -1,5 +1,5 @@
 CONFIG = {
-    "modelname": "smallandshort-31",
+    "modelname": "smallandshort-32",
     "model_type": "RegressionModel",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
@@ -11,7 +11,7 @@ CONFIG = {
 
     # the size to cap the dataset at
     # if the dataset is already smaller than this, this does nothing
-    "dataset_cap": 4_000_000,
+    #"dataset_cap": 4_000_000,
 
     # embedding dimension
     # good starting value: 402
@@ -28,7 +28,7 @@ CONFIG = {
 
     # number of blocks to have
     # higher means a deeper network
-    "n_blocks": 16,
+    "n_blocks": 8,
 
     # good starting value: 3*10^-4
     "learning_rate": 3*(10**-4), 
@@ -37,7 +37,7 @@ CONFIG = {
     "batchsize": 8192, 
 
     # good starting value: 0.1
-    "weight_decay": 0.0001, 
+    "weight_decay": 0.001, 
 
     # usually 0.1
     "lr_factor": 0.1, 
