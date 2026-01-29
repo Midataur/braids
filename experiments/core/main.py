@@ -37,7 +37,7 @@ CONFIG = {
     "batchsize": 8192, 
 
     # good starting value: 0.1
-    "weight_decay": 0.001, 
+    "weight_decay": 0.1, 
 
     # usually 0.1
     "lr_factor": 0.1, 
