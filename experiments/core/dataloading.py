@@ -6,7 +6,7 @@ import os
 
 # subset can be "train", "val", or "test"
 def create_dataset(subset, config, verbose=False):
-    DataSetType = DATASETS[config["model_type"]]
+    DataSetType = DATASETS[config["dataset_type"]]
 
     # sometimes this can be "verbose AND some other condition"
     should_speak = verbose

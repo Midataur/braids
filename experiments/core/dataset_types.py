@@ -75,5 +75,5 @@ class BasicRegression(SimpleDataset):
 
 
 DATASETS = {
-    "RegressionModel": BasicRegression
+    "basicregression": BasicRegression,
 }
