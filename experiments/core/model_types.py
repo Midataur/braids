@@ -207,8 +207,41 @@ class RegressionModel(BasicTransformer):
         # we're checking if the outputs (when rounded) is the right vector
         return (output.round() == target.round()).float().mean()
 
+class LegacyRegression(RegressionModel):
+    """
+        This is only here to support models created before I fixed the vocab_size bug.
+        It should not be used for new models going forward.
+    """
+
+    def __init__(self, config):
+        super().__init__(config)
+        n_embed = config["n_embed"]
+        vocab_size = config["braid_count"]*2 + 1
+
+        self.token_embedding_table = nn.Embedding(vocab_size, n_embed)
+
+class ExpEndRegression(RegressionModel):
+    """
+        The same as a regression model but exp is applied to the final output.
+
+        Theoretically this reduced the variance needed of the linear layer
+        if the outputs need to get large.
+    """
+
+    def output_step(self, x):
+        logits = self.lm_head(x) #(B, T, vocab_size)
+
+        # focus only on the last time step
+        logits = logits[:, -1:, :] # (B, vocab_size)
+
+        # apply the exponential
+        logits = torch.exp(logits)
+
+        return logits
 
 MODELS = {
     "BasicTransformer": BasicTransformer,
-    "RegressionModel": RegressionModel
+    "RegressionModel": RegressionModel,
+    "LegacyRegression": LegacyRegression,
+    "ExpEndRegression": ExpEndRegression,
 }

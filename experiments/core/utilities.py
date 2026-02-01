@@ -24,7 +24,7 @@ def save_model_and_config(model, config, accelerator):
         pickle.dump(config, file)
 
 
-def try_loading_model(config):
+def try_loading_model(config, surgery_func=None):
     """
         Checks if a model exists and loads it if it does;
         if it doesn't, it creates a fresh one.
@@ -45,6 +45,14 @@ def try_loading_model(config):
         with open(f"{save_directory}/{CONFIG_FILE_NAME}", "rb") as file:
             config = pickle.load(file)
             print("Loaded config from file, config may be different.")
+    else:
+        print("Did not load config from file")
+
+    # do surgery if we need to
+    # this allows support for legacy models that had bugs
+    if surgery_func is not None:
+        surgery_func(config)
+        print("Did some surgery")
 
     # create the model template
     ModelType = model_types.MODELS[config["model_type"]]

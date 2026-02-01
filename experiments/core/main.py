@@ -1,6 +1,6 @@
 CONFIG = {
-    "modelname": "smallandshort-33",
-    "model_type": "RegressionModel",
+    "modelname": "smallandshort-34",
+    "model_type": "ExpEndRegression",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
     "random_seed": 42,
