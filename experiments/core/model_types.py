@@ -239,9 +239,26 @@ class ExpEndRegression(RegressionModel):
 
         return logits
 
+class LessStupidExpEndRegression(RegressionModel):
+    """
+        The last one couldn't do negative answers, idk why I didn't realise that.
+    """
+
+    def output_step(self, x):
+        logits = self.lm_head(x) #(B, T, vocab_size)
+
+        # focus only on the last time step
+        logits = logits[:, -1:, :] # (B, vocab_size)
+
+        # apply the exponential
+        logits = torch.exp(torch.abs(logits))*logits
+
+        return logits
+
 MODELS = {
     "BasicTransformer": BasicTransformer,
     "RegressionModel": RegressionModel,
     "LegacyRegression": LegacyRegression,
     "ExpEndRegression": ExpEndRegression,
+    "LessStupidExpEndRegression": LessStupidExpEndRegression,
 }
