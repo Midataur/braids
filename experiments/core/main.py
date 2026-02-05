@@ -1,6 +1,6 @@
 CONFIG = {
     "modelname": "smallandshort-35",
-    "model_type": "LessStupidExpEndRegression",
+    "model_type": "RegressionModel",
     "dataset": "smallandshort",
     "dataset_type": "basicregression",
     "random_seed": 42,
@@ -11,7 +11,7 @@ CONFIG = {
 
     # the size to cap the dataset at
     # if the dataset is already smaller than this, this does nothing
-    #"dataset_cap": 4_000_000,
+    "dataset_cap": 8_000_000,
 
     # embedding dimension
     # good starting value: 402
@@ -31,7 +31,7 @@ CONFIG = {
     "n_blocks": 8,
 
     # good starting value: 3*10^-4
-    "learning_rate": 3*(10**-4), 
+    "learning_rate": 3*(10**-5), 
 
     # good starting value: 64
     "batchsize": 8192, 
